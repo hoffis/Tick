@@ -169,7 +169,6 @@
     );
 };
 
-
 TICK_TRAIT(is_advanceable, is_incrementable&lt;_&gt;)
 {
     template&lt;class T, class I&gt;
@@ -185,7 +184,6 @@ struct advance_advanceable
     {
         it += n;
     }
-
 };
 
 struct advance_incrementable
@@ -195,7 +193,6 @@ struct advance_incrementable
     {
         while (n--) ++it;
     }
-
 };
 
 static fit::static_&lt;fit::conditional_adaptor&lt;advance_advanceable, advance_incrementable&gt;&gt; advance = {};
