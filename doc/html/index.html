@@ -162,7 +162,7 @@
 <pre class="prettyprint well"><code class="cpp">TICK_TRAIT(is_incrementable)
 {
     template&lt;class T&gt;
-    auto requires_(T&amp;&amp; x) -&gt; TICK_VALID(
+    auto requires_(T&amp;&amp; x) -&gt; decltype(
         x++,
         ++x
     );
@@ -196,7 +196,7 @@ template&lt;class T, TICK_REQUIRES(is_incrementable&lt;T&gt;())&gt;
 <pre class="prettyprint well"><code>TICK_TRAIT(is_incrementable, std::is_integral&lt;_&gt;)
 {
     template&lt;class T&gt;
-    auto requires_(T&amp;&amp; x) -&gt; TICK_VALID(
+    auto requires_(T&amp;&amp; x) -&gt; decltype(
         x++,
         ++x
     );

@@ -176,19 +176,19 @@
 <pre class="prettyprint well"><code class="cpp">TICK_TRAIT(my_trait)
 {
     template&lt;class T&gt;
-    auto requires_(T&amp;&amp; x) -&gt; TICK_VALID(
+    auto requires_(T&amp;&amp; x) -&gt; decltype(
         ...
     );
 };
 </code></pre>
 
-<p>The parameters to the trait are based on the parameters to the <code>requires</code> function. Then inside the <code>TICK_VALID</code> macro, all the expressions are placed that will be check for. If one of the expressions is not valid, the the trait will return false. </p>
+<p>The parameters to the trait are based on the parameters to the <code>requires</code> function. Then inside the <code>decltype</code>, all the expressions are placed that will be check for. If one of the expressions is not valid, the the trait will return false. </p>
 <h2 id="refinements">Refinements</h2>
 <p>Refinements can be expressed after the name. Each refinement is a <a href="http://www.boost.org/doc/libs/1_55_0/libs/mpl/doc/refmanual/placeholder-expression.html">placeholder expression</a>, where each placeholder(ie <code>_1</code>, <code>_2</code>, etc) are replaced by their corresponding type passed into the trait. In the case of traits that accept a single parameter the unnamed placeholder(<code>_</code>) can be used, for example:</p>
 <pre class="prettyprint well"><code class="cpp">TICK_TRAIT(is_incrementable, std::is_default_constructible&lt;_&gt;)
 {
     template&lt;class T&gt;
-    auto requires_(T&amp;&amp; x) -&gt; TICK_VALID(
+    auto requires_(T&amp;&amp; x) -&gt; decltype(
         x++,
         ++x
     );
@@ -202,7 +202,7 @@
     std::is_default_constructible&lt;_2&gt;)
 {
     template&lt;class T, class U&gt;
-    auto requires_(T&amp;&amp; x, U&amp;&amp; y) -&gt; TICK_VALID(
+    auto requires_(T&amp;&amp; x, U&amp;&amp; y) -&gt; decltype(
         x == y,
         x != y
     );
@@ -219,7 +219,7 @@
 <pre class="prettyprint well"><code class="cpp">TICK_TRAIT(is_incrementable)
 {
     template&lt;class T&gt;
-    auto requires_(T&amp;&amp; x) -&gt; TICK_VALID(
+    auto requires_(T&amp;&amp; x) -&gt; decltype(
         returns&lt;int&gt;(x++)
     );
 };
@@ -230,7 +230,7 @@
 <pre class="prettyprint well"><code class="cpp">TICK_TRAIT(is_incrementable)
 {
     template&lt;class T&gt;
-    auto requires_(T&amp;&amp; x) -&gt; TICK_VALID(
+    auto requires_(T&amp;&amp; x) -&gt; decltype(
         returns&lt;std::is_integral&lt;_&gt;&gt;(x++)
     );
 };
@@ -241,7 +241,7 @@
 <pre class="prettyprint well"><code class="cpp">TICK_TRAIT(is_incrementable)
 {
     template&lt;class T&gt;
-    auto requires_(T&amp;&amp; x) -&gt; TICK_VALID(
+    auto requires_(T&amp;&amp; x) -&gt; decltype(
         TICK_RETURNS(x++, int)
     );
 };
@@ -252,7 +252,7 @@
 <pre class="prettyprint well"><code class="cpp">TICK_TRAIT(has_nested_type)
 {
     template&lt;class T&gt;
-    auto requires_(const T&amp; x) -&gt; TICK_VALID(
+    auto requires_(const T&amp; x) -&gt; decltype(
         has_type&lt;typename T::type&gt;()
     );
 };
@@ -263,7 +263,7 @@
 <pre class="prettyprint well"><code class="cpp">TICK_TRAIT(has_nested_int_type)
 {
     template&lt;class T&gt;
-    auto requires_(const T&amp; x) -&gt; TICK_VALID(
+    auto requires_(const T&amp; x) -&gt; decltype(
         has_type&lt;typename T::type, std::is_integral&lt;_&gt;&gt;()
     );
 };
@@ -275,7 +275,7 @@
 <pre class="prettyprint well"><code class="cpp">TICK_TRAIT(has_nested_result)
 {
     template&lt;class T&gt;
-    auto requires_(const T&amp; x) -&gt; TICK_VALID(
+    auto requires_(const T&amp; x) -&gt; decltype(
         has_template&lt;T::template result&gt;()
     );
 };
@@ -287,7 +287,7 @@
 <pre class="prettyprint well"><code class="cpp">TICK_TRAIT(is_2d_array)
 {
     template&lt;class T&gt;
-    auto requires_(const T&amp; x) -&gt; TICK_VALID(
+    auto requires_(const T&amp; x) -&gt; decltype(
         is_true&lt;std::is_same&lt;std::rank&lt;T&gt;::type, std::integral_constant&lt;std::size_t, 2&gt;&gt; &gt;()
     );
 };
@@ -298,7 +298,7 @@
 <pre class="prettyprint well"><code class="cpp">struct is_incrementable_r : tick::ops
 {
     template&lt;class T&gt;
-    auto requires_(T&amp;&amp; x) -&gt; TICK_VALID(
+    auto requires_(T&amp;&amp; x) -&gt; decltype(
         x++,
         ++x
     );
@@ -318,7 +318,7 @@ struct is_incrementable
 : tick::ops, tick::refines&lt;std::is_default_constructible&lt;tick::_&gt;&gt;
 {
     template&lt;class T&gt;
-    auto requires_(T&amp;&amp; x) -&gt; TICK_VALID(
+    auto requires_(T&amp;&amp; x) -&gt; decltype(
         x++,
         ++x
     );

@@ -150,6 +150,8 @@
         
             <li><a href="#tick_class_requires">TICK_CLASS_REQUIRES</a></li>
         
+            <li><a href="#tick_member_requires">TICK_MEMBER_REQUIRES</a></li>
+        
             <li><a href="#tick_function_requires">TICK_FUNCTION_REQUIRES</a></li>
         
     
@@ -168,7 +170,6 @@ void increment(T&amp; x)
 }
 </code></pre>
 
-<p>This can also be used with classes.</p>
 <h2 id="tick_class_requires">TICK_CLASS_REQUIRES</h2>
 <p>The <code>TICK_CLASS_REQUIRES</code> can be used when template specialization is done on classes. For example,</p>
 <pre class="prettyprint well"><code class="cpp">template&lt;class T, class=void&gt;
@@ -187,6 +188,21 @@ template&lt;class T&gt;
 struct foo&lt;T, TICK_CLASS_REQUIRES(std::is_integral&lt;T&gt;())&gt;
 {
     ...
+};
+</code></pre>
+
+<h2 id="tick_member_requires">TICK_MEMBER_REQUIRES</h2>
+<p>The <code>TICK_MEMBER_REQUIRES</code> can be used for member function inside of classes. For example,</p>
+<pre class="prettyprint well"><code class="cpp">template&lt;class T&gt;
+struct foo
+{
+    T x;
+
+    TICK_MEMBER_REQUIRES(is_incrementable&lt;T&gt;())
+    void up()
+    {
+        x++;
+    }
 };
 </code></pre>
 

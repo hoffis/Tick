@@ -163,7 +163,7 @@
 <pre class="prettyprint well"><code>TICK_TRAIT(is_incrementable)
 {
     template&lt;class T&gt;
-    auto requires(T&amp;&amp; x) -&gt; TICK_VALID(
+    auto requires(T&amp;&amp; x) -&gt; decltype(
         x++,
         ++x
     );
@@ -172,7 +172,7 @@
 TICK_TRAIT(is_advanceable, is_incrementable&lt;_&gt;)
 {
     template&lt;class T, class I&gt;
-    auto requires(T&amp;&amp; x, I&amp;&amp; i) -&gt; TICK_VALID(
+    auto requires(T&amp;&amp; x, I&amp;&amp; i) -&gt; decltype(
         x += i
     );
 };
