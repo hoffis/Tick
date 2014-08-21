@@ -90,6 +90,10 @@
                             </li>
                         
                             <li >
+                                <a href="acknowledgments/">Acknowledgments</a>
+                            </li>
+                        
+                            <li >
                                 <a href="design/">Design Notes</a>
                             </li>
                         
@@ -157,19 +161,27 @@
 <h1 id="tick">Tick</h1>
 <p>Trait introspection and concept creator for C++11</p>
 <h1 id="getting-started">Getting Started</h1>
-<p>Tick provides a mechanism for easily defining and using traits in C++11. It is based on ideas developed by Eric Niebler in <a href="http://ericniebler.com/2013/11/23/concept-checking-in-c11/">this blog post</a>.</p>
-<p>For example we could create an <code>is_incrementable</code> trait, like this:</p>
+<p>Tick provides a mechanism for easily defining and using traits in C++11. For example, if we defined a generic <code>increment</code> function, like this:</p>
+<pre class="prettyprint well"><code class="cpp">template&lt;class T&gt;
+void increment(T&amp; x)
+{
+    x++;
+}
+</code></pre>
+
+<p>If we pass something that does not have the <code>++</code> operator to <code>increment</code>, we will get an error inside of the <code>increment</code> function. This can make it unclear whether the error is due to a mistake by the user of the function or by the implementor of the function. Instead we want to check the type requirements of the function. </p>
+<p>Using Tick we can create an <code>is_incrementable</code> trait, like this:</p>
 <pre class="prettyprint well"><code class="cpp">TICK_TRAIT(is_incrementable)
 {
     template&lt;class T&gt;
-    auto requires_(T&amp;&amp; x) -&gt; decltype(
-        x++,
-        ++x
-    );
+    auto requires_(T&amp;&amp; x) -&gt; tick::valid&lt;
+        decltype(x++),
+        decltype(++x)
+    &gt;;
 };
 </code></pre>
 
-<p>And then we can use a simple requires clause in our functions:</p>
+<p>And then we can use a simple requires clause in our function to check the type requirements:</p>
 <pre class="prettyprint well"><code class="cpp">template&lt;class T, TICK_REQUIRES(is_incrementable&lt;T&gt;())&gt;
 void increment(T&amp; x)
 {
@@ -177,7 +189,7 @@ void increment(T&amp; x)
 }
 </code></pre>
 
-<p>So if we pass something that is not incrementable to <code>increment</code>:</p>
+<p>So, now, if we pass something that is not incrementable to <code>increment</code>:</p>
 <pre class="prettyprint well"><code class="cpp">struct foo {};
 
 foo f;
@@ -192,19 +204,21 @@ demo.cpp:14:19: note: candidate template ignored: disabled by 'enable_if' [with 
 template&lt;class T, TICK_REQUIRES(is_incrementable&lt;T&gt;())&gt;
                   ^
 </code></pre>
-<p>This is pretty concise and gives enough information for most commons cases, however, sometimes we may want more information. In that case the <code>TICK_TRAIT_CHECK</code> can be used. For example, say we had a <code>is_incrementable</code> type defined like this:</p>
-<pre class="prettyprint well"><code>TICK_TRAIT(is_incrementable, std::is_integral&lt;_&gt;)
+<p>This gives an error at the call to <code>increment</code> rather than inside the function, and then pointes to the type requirements of the function. This gives enough information for most commons cases, however, sometimes we may want more information. In that case the <code>TICK_TRAIT_CHECK</code> can be used. For example, say we had the <code>is_incrementable</code> trait defined like this:</p>
+<pre class="prettyprint well"><code class="cpp">TICK_TRAIT(is_incrementable, std::is_integral&lt;_&gt;)
 {
     template&lt;class T&gt;
-    auto requires_(T&amp;&amp; x) -&gt; decltype(
-        x++,
-        ++x
-    );
+    auto requires_(T&amp;&amp; x) -&gt; tick::valid&lt;
+        decltype(x++),
+        decltype(++x)
+    &gt;;
 };
 </code></pre>
+
 <p>Then if we use <code>TICK_TRAIT_CHECK</code>, we can see why <code>int*</code> is not incrementable:</p>
-<pre class="prettyprint well"><code>TICK_TRAIT_CHECK(is_incrementable&lt;int*&gt;);
+<pre class="prettyprint well"><code class="cpp">TICK_TRAIT_CHECK(is_incrementable&lt;int*&gt;);
 </code></pre>
+
 <p>Which will produce this error:</p>
 <pre class="prettyprint well"><code>../tick/trait_check.h:95:38: error: implicit instantiation of undefined template 'tick::TRAIT_CHECK_FAILURE&lt;std::is_integral&lt;int *&gt;, is_incrementable&lt;int *&gt; &gt;'
 </code></pre>
