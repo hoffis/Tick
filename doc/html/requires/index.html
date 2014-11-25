@@ -156,6 +156,8 @@
         
             <li><a href="#tick_member_requires">TICK_MEMBER_REQUIRES</a></li>
         
+            <li><a href="#tick_param_requires">TICK_PARAM_REQUIRES</a></li>
+        
             <li><a href="#tick_function_requires">TICK_FUNCTION_REQUIRES</a></li>
         
     
@@ -210,6 +212,22 @@ struct foo
 };
 </code></pre>
 
+<h2 id="tick_param_requires">TICK_PARAM_REQUIRES</h2>
+<p>The <code>TICK_PARAM_REQUIRES</code> can be used in the paramater of the function. This is useful for lambdas:</p>
+<pre class="prettyprint well"><code class="cpp">auto increment = [](auto&amp; x, TICK_PARAM_REQUIRES(is_incrementable&lt;decltype(x)&gt;()))
+{
+    x++;
+};
+</code></pre>
+
+<p>Also, the <code>trait</code> function is provided which can be used to deduce the type of the parameters:</p>
+<pre class="prettyprint well"><code class="cpp">auto increment = [](auto&amp; x, TICK_PARAM_REQUIRES(trait&lt;is_incrementable&gt;(x)))
+{
+    x++;
+};
+</code></pre>
+
+<p>Note: The <code>trait</code> function always deduces the type without references. So <code>trait&lt;std::is_lvalue_reference&gt;(x)</code> will always be false.</p>
 <h2 id="tick_function_requires">TICK_FUNCTION_REQUIRES</h2>
 <p>The <code>TICK_FUNCTION_REQUIRES</code> can be used on functions. This requires placing parenthesis around the return type:</p>
 <pre class="prettyprint well"><code class="cpp">template&lt;class T&gt;
