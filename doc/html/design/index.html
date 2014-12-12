@@ -76,6 +76,10 @@
                                 <a href="../check/">Checking a Trait</a>
                             </li>
                         
+                            <li >
+                                <a href="../tag/">Tag dispacthing</a>
+                            </li>
+                        
                         </ul>
                     </li>
                 
@@ -154,8 +158,6 @@
         
             <li><a href="#trait-based">Trait-based</a></li>
         
-            <li><a href="#no-tag-dispatching">No tag-dispatching</a></li>
-        
             <li><a href="#specializations">Specializations</a></li>
         
     
@@ -221,46 +223,6 @@ TICK_TRAIT(is_incrementable)
 <p>This requires placing each expression in a decltype, but if this was forgotten there would be a compile error pointing to the incorrect expression.</p>
 <h2 id="trait-based">Trait-based</h2>
 <p>The concept predicates in Tick are defined as regular type traits(ie they are integrel constants) instead of a <code>constexpr bool</code> function. They are almost functionally the same in use. However, as a trait, it allows for better flexibility and expressiveness, through higher-order programming. This is what enables passing the traits to other functions which can be used to match return types to traits as well as other types.</p>
-<h2 id="no-tag-dispatching">No tag-dispatching</h2>
-<p>Currently, Tick does not support tag-dispatching for overloading functions. That is because tag-dispatching doesn't work well with specialization. So instead of tag-dispatching, conditional overloading can be used. Here is example of implementing <code>advance</code> using the <a href="http://pfultz2.github.io/Fit/doc/html/conditional/"><code>conditional_adaptor</code></a> from the Fit library:</p>
-<pre class="prettyprint well"><code>TICK_TRAIT(is_incrementable)
-{
-    template&lt;class T&gt;
-    auto requires_(T&amp;&amp; x) -&gt; tick::valid&lt;
-        decltype(x++),
-        decltype(++x)
-    &gt;;
-};
-
-TICK_TRAIT(is_advanceable, is_incrementable&lt;_&gt;)
-{
-    template&lt;class T, class I&gt;
-    auto requires_(T&amp;&amp; x, I&amp;&amp; i) -&gt; tick::valid&lt;
-        decltype(x += i)
-    &gt;;
-};
-
-struct advance_advanceable
-{
-    template&lt;class Iterator, TICK_REQUIRES(is_advanceable&lt;Iterator, int&gt;())&gt;
-    void operator()(Iterator&amp; it, int n) const
-    {
-        it += n;
-    }
-};
-
-struct advance_incrementable
-{
-    template&lt;class Iterator, TICK_REQUIRES(is_incrementable&lt;Iterator&gt;())&gt;
-    void operator()(Iterator&amp; it, int n) const
-    {
-        while (n--) ++it;
-    }
-};
-
-static fit::static_&lt;fit::conditional_adaptor&lt;advance_advanceable, advance_incrementable&gt;&gt; advance = {};
-</code></pre>
-<p>So if the <code>advance_advanceable</code> function is not callable then it will try to call the <code>advance_incrementable</code> function.</p>
 <h2 id="specializations">Specializations</h2>
 <p>All the traits created can be specialized by the user. This is very important. Since the definition of traits relies on duck typing, there are times that even though it may quack like a duck it is not a duck. So with specialization the user can clarify the type's capabilities.</p>
 </div>
