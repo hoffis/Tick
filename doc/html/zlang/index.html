@@ -164,7 +164,7 @@
 <pre class="prettyprint well"><code class="cpp">$(trait is_incrementable)
 {
     template&lt;class T&gt;
-    auto requires_(T&amp;&amp; x) -&gt; tick::valid&lt;
+    auto require(T&amp;&amp; x) -&gt; valid&lt;
         decltype(x++),
         decltype(++x)
     &gt;;

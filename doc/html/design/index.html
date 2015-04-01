@@ -167,11 +167,11 @@
 
 <h1 id="design-notes">Design Notes</h1>
 <h2 id="using-template-class">Using template class</h2>
-<p>Tick uses a the <code>tick::valid</code> template class to place valid expressions, because it provides a more robust solution. Ideally, using tick we could define the traits like this:</p>
+<p>Tick uses a the <code>valid</code> template class to place valid expressions, because it provides a more robust solution. Ideally, using tick we could define the traits like this:</p>
 <pre class="prettyprint well"><code>TICK_TRAIT(is_incrementable)
 {
     template&lt;class T&gt;
-    auto requires_(T&amp;&amp; x) -&gt; decltype(
+    auto require(T&amp;&amp; x) -&gt; decltype(
         x++,
         ++x
     );
@@ -181,7 +181,7 @@
 <pre class="prettyprint well"><code>TICK_TRAIT(is_incrementable)
 {
     template&lt;class T&gt;
-    auto requires_(T&amp;&amp; x) -&gt; decltype(
+    auto require(T&amp;&amp; x) -&gt; decltype(
         (void)x++,
         (void)++x
     );
@@ -194,7 +194,7 @@ void valid_expr(T&amp;&amp;...);
 TICK_TRAIT(is_incrementable)
 {
     template&lt;class T&gt;
-    auto requires_(T&amp;&amp; x) -&gt; decltype(valid_expr(
+    auto require(T&amp;&amp; x) -&gt; decltype(valid_expr(
         x++,
         ++x
     ));
@@ -204,17 +204,17 @@ TICK_TRAIT(is_incrementable)
 <pre class="prettyprint well"><code>TICK_TRAIT(is_incrementable)
 {
     template&lt;class T&gt;
-    auto requires_(T&amp;&amp; x) -&gt; decltype(valid_expr(
+    auto require(T&amp;&amp; x) -&gt; decltype(valid_expr(
         (x++, 1),
         (++x, 1)
     ));
 };
 </code></pre>
-<p>However, it can be easy to forget to put the <code>1</code> in there. So instead we use a <code>tick::valid</code> template class, like this:</p>
+<p>However, it can be easy to forget to put the <code>1</code> in there. So instead we use a <code>valid</code> template class, like this:</p>
 <pre class="prettyprint well"><code>TICK_TRAIT(is_incrementable)
 {
     template&lt;class T&gt;
-    auto requires_(T&amp;&amp; x) -&gt; tick::valid&lt;
+    auto require(T&amp;&amp; x) -&gt; valid&lt;
         decltype(x++),
         decltype(++x)
     &gt;;

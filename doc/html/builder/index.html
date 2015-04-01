@@ -180,21 +180,21 @@
             <div class="col-md-9" role="main">
 
 <h1 id="build-traits-using-the-tick_trait-macro">Build traits using the TICK_TRAIT macro</h1>
-<p>This macro will build a boolean type trait for you. Each trait has a <code>requires_</code> member function of the form:</p>
+<p>This macro will build a boolean type trait for you. Each trait has a <code>require</code> member function of the form:</p>
 <pre class="prettyprint well"><code class="cpp">TICK_TRAIT(my_trait)
 {
     template&lt;class T&gt;
-    auto requires_(T&amp;&amp; x) -&gt; tick::valid&lt;
+    auto require(T&amp;&amp; x) -&gt; valid&lt;
         ...
     &gt;;
 };
 </code></pre>
 
-<p>The parameters to the trait are based on the parameters passed to the <code>requires_</code> function. Then inside the <code>tick::valid</code>, all the expressions are placed that will be check for. Each expression in <code>tick::valid</code> needs a <code>decltype</code> around it. If one of the expressions is not valid, the the trait will return false. For example,</p>
+<p>The parameters to the trait are based on the parameters passed to the <code>require</code> function. Then inside the <code>valid</code>, all the expressions are placed that will be check for. Each expression in <code>valid</code> needs a <code>decltype</code> around it. If one of the expressions is not valid, the the trait will return false. For example,</p>
 <pre class="prettyprint well"><code class="cpp">TICK_TRAIT(my_trait)
 {
     template&lt;class T&gt;
-    auto requires_(T&amp;&amp; x) -&gt; tick::valid&lt;
+    auto require(T&amp;&amp; x) -&gt; valid&lt;
         decltype(x++)
     &gt;;
 };
@@ -206,7 +206,7 @@
 <pre class="prettyprint well"><code class="cpp">TICK_TRAIT(is_incrementable, std::is_default_constructible&lt;_&gt;)
 {
     template&lt;class T&gt;
-    auto requires_(T&amp;&amp; x) -&gt; tick::valid&lt;
+    auto require(T&amp;&amp; x) -&gt; valid&lt;
         decltype(x++),
         decltype(++x)
     &gt;;
@@ -220,7 +220,7 @@
     std::is_default_constructible&lt;_2&gt;)
 {
     template&lt;class T, class U&gt;
-    auto requires_(T&amp;&amp; x, U&amp;&amp; y) -&gt; tick::valid&lt;
+    auto require(T&amp;&amp; x, U&amp;&amp; y) -&gt; valid&lt;
         decltype(x == y),
         decltype(x != y)
     &gt;;
@@ -237,7 +237,7 @@
 <pre class="prettyprint well"><code class="cpp">TICK_TRAIT(is_incrementable)
 {
     template&lt;class T&gt;
-    auto requires_(T&amp;&amp; x) -&gt; tick::valid&lt;
+    auto require(T&amp;&amp; x) -&gt; valid&lt;
         decltype(returns&lt;int&gt;(x++))
     &gt;;
 };
@@ -248,7 +248,7 @@
 <pre class="prettyprint well"><code class="cpp">TICK_TRAIT(is_incrementable)
 {
     template&lt;class T&gt;
-    auto requires_(T&amp;&amp; x) -&gt; tick::valid&lt;
+    auto require(T&amp;&amp; x) -&gt; valid&lt;
         decltype(returns&lt;std::is_integral&lt;_&gt;&gt;(x++))
     &gt;;
 };
@@ -259,7 +259,7 @@
 <pre class="prettyprint well"><code class="cpp">TICK_TRAIT(is_incrementable)
 {
     template&lt;class T&gt;
-    auto requires_(T&amp;&amp; x) -&gt; tick::valid&lt;
+    auto require(T&amp;&amp; x) -&gt; valid&lt;
         TICK_RETURNS(x++, int)
     &gt;;
 };
@@ -270,7 +270,7 @@
 <pre class="prettyprint well"><code class="cpp">TICK_TRAIT(has_nested_type)
 {
     template&lt;class T&gt;
-    auto requires_(const T&amp; x) -&gt; tick::valid&lt;
+    auto require(const T&amp; x) -&gt; valid&lt;
         has_type&lt;typename T::type&gt;
     &gt;;
 };
@@ -281,7 +281,7 @@
 <pre class="prettyprint well"><code class="cpp">TICK_TRAIT(has_nested_type)
 {
     template&lt;class T&gt;
-    auto requires_(const T&amp; x) -&gt; tick::valid&lt;
+    auto require(const T&amp; x) -&gt; valid&lt;
         typename T::type
     &gt;;
 };
@@ -291,7 +291,7 @@
 <pre class="prettyprint well"><code class="cpp">TICK_TRAIT(has_nested_int_type)
 {
     template&lt;class T&gt;
-    auto requires_(const T&amp; x) -&gt; tick::valid&lt;
+    auto require(const T&amp; x) -&gt; valid&lt;
         has_type&lt;typename T::type, std::is_integral&lt;_&gt;&gt;
     &gt;;
 };
@@ -302,7 +302,7 @@
 <pre class="prettyprint well"><code class="cpp">TICK_TRAIT(has_nested_int_type)
 {
     template&lt;class T&gt;
-    auto requires_(const T&amp; x) -&gt; tick::valid&lt;
+    auto require(const T&amp; x) -&gt; valid&lt;
         decltype(has_type&lt;typename T::type, std::is_integral&lt;_&gt;&gt;())
     &gt;;
 };
@@ -312,8 +312,8 @@
 <pre class="prettyprint well"><code class="cpp">TICK_TRAIT(has_nested_int_type)
 {
     template&lt;class T&gt;
-    auto requires_(const T&amp; x) -&gt; tick::valid&lt;
-        TICK_HAS_TYPE(typename T::type, std::is_integral&lt;_&gt;&gt;)
+    auto require(const T&amp; x) -&gt; valid&lt;
+        TICK_HAS_TYPE(T::type, std::is_integral&lt;_&gt;&gt;)
     &gt;;
 };
 </code></pre>
@@ -323,7 +323,7 @@
 <pre class="prettyprint well"><code class="cpp">TICK_TRAIT(has_nested_result)
 {
     template&lt;class T&gt;
-    auto requires_(const T&amp; x) -&gt; tick::valid&lt;
+    auto require(const T&amp; x) -&gt; valid&lt;
         has_template&lt;T::template result&gt;
     &gt;;
 };
@@ -335,7 +335,7 @@
 <pre class="prettyprint well"><code class="cpp">TICK_TRAIT(is_2d_array)
 {
     template&lt;class T&gt;
-    auto requires_(const T&amp; x) -&gt; tick::valid&lt;
+    auto require(const T&amp; x) -&gt; valid&lt;
         is_true&lt;std::is_same&lt;std::rank&lt;T&gt;::type, std::integral_constant&lt;std::size_t, 2&gt;&gt; &gt;
     &gt;;
 };
@@ -345,7 +345,7 @@
 <pre class="prettyprint well"><code class="cpp">TICK_TRAIT(is_2d_array)
 {
     template&lt;class T&gt;
-    auto requires_(const T&amp; x) -&gt; tick::valid&lt;
+    auto require(const T&amp; x) -&gt; valid&lt;
         decltype(is_true&lt;std::is_same&lt;std::rank&lt;T&gt;::type, std::integral_constant&lt;std::size_t, 2&gt;&gt; &gt;())
     &gt;;
 };
@@ -355,18 +355,18 @@
 <pre class="prettyprint well"><code class="cpp">TICK_TRAIT(is_2d_array)
 {
     template&lt;class T&gt;
-    auto requires_(const T&amp; x) -&gt; tick::valid&lt;
+    auto require(const T&amp; x) -&gt; valid&lt;
         TICK_IS_TRUE(std::is_same&lt;std::rank&lt;T&gt;::type, std::integral_constant&lt;std::size_t, 2&gt;&gt; &gt;)
     &gt;;
 };
 </code></pre>
 
 <h1 id="build-traits-without-macros">Build traits without macros</h1>
-<p>The traits can be built using the <code>TICK_TRAIT</code> macros. Heres how to build them. First, build a class for the <code>requires_</code> functions and inherit from <code>tick::ops</code> to bring in all the query operations:</p>
+<p>The traits can be built using the <code>TICK_TRAIT</code> macros. Heres how to build them. First, build a class for the <code>require</code> functions and inherit from <code>tick::ops</code> to bring in all the query operations:</p>
 <pre class="prettyprint well"><code class="cpp">struct is_incrementable_r : tick::ops
 {
     template&lt;class T&gt;
-    auto requires_(T&amp;&amp; x) -&gt; tick::valid&lt;
+    auto require(T&amp;&amp; x) -&gt; valid&lt;
         decltype(x++),
         decltype(++x)
     &gt;;
@@ -386,7 +386,7 @@ struct is_incrementable
 : tick::ops, tick::refines&lt;std::is_default_constructible&lt;tick::_&gt;&gt;
 {
     template&lt;class T&gt;
-    auto requires_(T&amp;&amp; x) -&gt; tick::valid&lt;
+    auto require(T&amp;&amp; x) -&gt; valid&lt;
         decltype(x++),
         decltype(++x)
     &gt;;

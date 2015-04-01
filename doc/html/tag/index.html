@@ -166,7 +166,7 @@
 <pre class="prettyprint well"><code class="cpp">TICK_TRAIT(is_incrementable)
 {
     template&lt;class T&gt;
-    auto requires_(T&amp;&amp; x) -&gt; tick::valid&lt;
+    auto require(T&amp;&amp; x) -&gt; valid&lt;
         decltype(x++),
         decltype(++x)
     &gt;;
@@ -175,7 +175,7 @@
 TICK_TRAIT(is_decrementable, is_incrementable&lt;_&gt;)
 {
     template&lt;class T&gt;
-    auto requires_(T&amp;&amp; x) -&gt; tick::valid&lt;
+    auto require(T&amp;&amp; x) -&gt; valid&lt;
         decltype(x--),
         decltype(--x)
     &gt;;
@@ -184,7 +184,7 @@ TICK_TRAIT(is_decrementable, is_incrementable&lt;_&gt;)
 TICK_TRAIT(is_advanceable, is_decrementable&lt;_&gt;)
 {
     template&lt;class T, class Number&gt;
-    auto requires_(T&amp;&amp; x, Number n) -&gt; tick::valid&lt;
+    auto require(T&amp;&amp; x, Number n) -&gt; valid&lt;
         decltype(x += n)
     &gt;;
 };
