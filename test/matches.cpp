@@ -2,6 +2,7 @@
 
 #include "test.h"
 #include <tick/detail/matches.h>
+#include <vector>
 
 template<class... T>
 struct replace_args_test
@@ -17,14 +18,27 @@ TICK_TEST_CASE()
         replace_args_test<long>);
     STATIC_ASSERT_SAME(typename tick::detail::replace_args<replace_args_test<tick::_1, tick::_2>, long, float>::type, 
         replace_args_test<long, float>);
+    STATIC_ASSERT_SAME(typename tick::detail::replace_args<tick::quote<replace_args_test>, long>::type, 
+        replace_args_test<long>);
+    STATIC_ASSERT_SAME(typename tick::detail::replace_args<tick::local_quote::quote<replace_args_test>, long>::type, 
+        replace_args_test<long>);
 }
 
 TICK_TEST_CASE()
 {
     static_assert(tick::detail::matches<int, int>::value, "int -> int doesn't match");
-    static_assert(tick::detail::matches<int, float>::value, "int -> float doesn't match");
     static_assert(tick::detail::matches<int, void>::value, "int -> void doesn't match");
     static_assert(tick::detail::matches<void, void>::value, "void -> void doesn't match");
+    
+    static_assert(!tick::detail::matches<int, int&>::value, "int -> int& shouldn't match");
+    static_assert(tick::detail::matches<int, const int&>::value, "int -> const int& doesn't match");
+    static_assert(tick::detail::matches<int, const float&>::value, "int -> const float& doesn't match");
+    
+    static_assert(tick::detail::matches<std::vector<int>::iterator, std::vector<int>::const_iterator>::value, 
+        "std::vector<int>::iterator -> std::vector<int>::const_iterator doesn't match");
+
+    static_assert(tick::detail::matches<std::vector<int>::iterator, const std::vector<int>::const_iterator&>::value, 
+        "std::vector<int>::iterator -> std::vector<int>::const_iterator& doesn't match");
 
     static_assert(tick::detail::matches<std::is_integral<tick::_>, int>::value, "is_integral<int> failed");
     static_assert(tick::detail::matches<std::is_integral<tick::_>, float>::value, "is_integral<float> failed");

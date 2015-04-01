@@ -4,12 +4,12 @@ Design Notes
 Using template class
 --------------------
 
-Tick uses a the `tick::valid` template class to place valid expressions, because it provides a more robust solution. Ideally, using tick we could define the traits like this:
+Tick uses a the `valid` template class to place valid expressions, because it provides a more robust solution. Ideally, using tick we could define the traits like this:
 
     TICK_TRAIT(is_incrementable)
     {
         template<class T>
-        auto requires_(T&& x) -> decltype(
+        auto require(T&& x) -> decltype(
             x++,
             ++x
         );
@@ -20,7 +20,7 @@ However, if one of the expressions returns a type that overloads the comma opera
     TICK_TRAIT(is_incrementable)
     {
         template<class T>
-        auto requires_(T&& x) -> decltype(
+        auto require(T&& x) -> decltype(
             (void)x++,
             (void)++x
         );
@@ -34,7 +34,7 @@ However, the `void` casts can be easy to forget. Another solution to the problem
     TICK_TRAIT(is_incrementable)
     {
         template<class T>
-        auto requires_(T&& x) -> decltype(valid_expr(
+        auto require(T&& x) -> decltype(valid_expr(
             x++,
             ++x
         ));
@@ -45,18 +45,18 @@ However, if one of the expressions returns `void`, then this will fail as well(i
     TICK_TRAIT(is_incrementable)
     {
         template<class T>
-        auto requires_(T&& x) -> decltype(valid_expr(
+        auto require(T&& x) -> decltype(valid_expr(
             (x++, 1),
             (++x, 1)
         ));
     };
 
-However, it can be easy to forget to put the `1` in there. So instead we use a `tick::valid` template class, like this:
+However, it can be easy to forget to put the `1` in there. So instead we use a `valid` template class, like this:
 
     TICK_TRAIT(is_incrementable)
     {
         template<class T>
-        auto requires_(T&& x) -> tick::valid<
+        auto require(T&& x) -> valid<
             decltype(x++),
             decltype(++x)
         >;

@@ -6,7 +6,7 @@ ZLang support
 $(trait is_incrementable)
 {
     template<class T>
-    auto requires_(T&& x) -> tick::valid<
+    auto require(T&& x) -> valid<
         decltype(x++),
         decltype(++x)
     >;
